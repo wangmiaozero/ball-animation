@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue-2.4.0.js"></script>
+    <style>
+        .shopcar{
+            position: relative;
+            top: 300px;
+            left: 100px;
+            background-color: blue;
+            width: 60px;
+            line-height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            color: white;
+        }
+        .ball{
+            width: 15px;
+            height: 15px;
+            background-color: red;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+
+        }
+        input{
+            margin: 0 50px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <input type="button" value="按钮" @click="addshopocar">
+        <transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter">
+            <div class="ball" ref="ball" v-show="ballflag"></div>
+        </transition>
+        <div class="shopcar" id="shopcar">购物车</div>
+    </div>
+    
+    <script>
+        new Vue({
+            el:"#app",
+            data:{
+                ballflag:false,
+            },
+            methods:{
+                addshopocar(){
+                        this.ballflag = !this.ballflag;
+                },
+                beforeEnter(el){
+                    el.style.transform="translate(0,0)"
+                },
+                enter(el,done){
+                    el.offsetWidth;//必须加
+                    //获取小球位置
+                    const ballPostion = this.$refs.ball.getBoundingClientRect()
+                    const shopcarPostion = document.getElementById("shopcar").getBoundingClientRect()
+                    const distX = shopcarPostion.left - ballPostion.left
+                    const distY = shopcarPostion.top - ballPostion.top
+                        el.style.transform = `translate(${distX}px,${distY}px)`
+                        el.style.transition = "all 0.5s cubic-bezier(.4,-0.3,1,.68)"
+                    done()
+                },
+                afterEnter(el){this.ballflag = !this.ballflag}
+            }
+        })
+    </script>
+</body>
+</html>
